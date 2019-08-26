@@ -1,6 +1,9 @@
 package models
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 // User is the default user object.
 type User struct {
@@ -28,4 +31,17 @@ func AddUser(u User) (User, error) {
 	nextID++
 	users = append(users, &u)
 	return u, nil
+}
+
+// GetUserById returns the requested user.
+func GetUserById(id int) (User, error) {
+	for _, u := range users {
+		if u.ID == id {
+			// Get user by dereferencing that pointer because
+			// a user value is expected.
+			return *u, nil
+		}
+	}
+
+	return User{}, fmt.Errorf("User with ID '%v' not found", id)
 }
