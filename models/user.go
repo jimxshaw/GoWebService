@@ -45,3 +45,14 @@ func GetUserById(id int) (User, error) {
 
 	return User{}, fmt.Errorf("User with ID '%v' not found", id)
 }
+
+// UpdateUser sets the user id.
+func UpdateUser(u User) (User, error) {
+	for i, candidate := range users {
+		if candidate.ID == u.ID {
+			users[i] = &u
+		}
+	}
+
+	return User{}, fmt.Errorf("User with ID '%v' not found", u.ID)
+}
