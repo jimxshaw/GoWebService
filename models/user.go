@@ -33,8 +33,8 @@ func AddUser(u User) (User, error) {
 	return u, nil
 }
 
-// GetUserById returns the requested user.
-func GetUserById(id int) (User, error) {
+// GetUserByID returns the requested user.
+func GetUserByID(id int) (User, error) {
 	for _, u := range users {
 		if u.ID == id {
 			// Get user by dereferencing that pointer because
@@ -55,4 +55,16 @@ func UpdateUser(u User) (User, error) {
 	}
 
 	return User{}, fmt.Errorf("User with ID '%v' not found", u.ID)
+}
+
+// RemoveUserByID deletes specified user.
+func RemoveUserByID(id int) error {
+	for i, u := range users {
+		if u.ID == id {
+			users = append(users[:i], users[i+1:]...)
+			return nil
+		}
+	}
+
+	return fmt.Errorf("User with ID '%v' not found", id)
 }
