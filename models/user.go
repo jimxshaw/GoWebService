@@ -50,6 +50,8 @@ func GetUserByID(id int) (User, error) {
 func UpdateUser(u User) (User, error) {
 	for i, candidate := range users {
 		if candidate.ID == u.ID {
+			// Use the index to replace the entry in the users
+			// slice with the user that was provided.
 			users[i] = &u
 		}
 	}
@@ -61,6 +63,8 @@ func UpdateUser(u User) (User, error) {
 func RemoveUserByID(id int) error {
 	for i, u := range users {
 		if u.ID == id {
+			// Build a new slice with the portion before the found
+			// user and the portion after the found user.
 			users = append(users[:i], users[i+1:]...)
 			return nil
 		}
