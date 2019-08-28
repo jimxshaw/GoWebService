@@ -53,6 +53,7 @@ func UpdateUser(u User) (User, error) {
 			// Use the index to replace the entry in the users
 			// slice with the user that was provided.
 			users[i] = &u
+			return u, nil
 		}
 	}
 
