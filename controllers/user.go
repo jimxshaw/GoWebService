@@ -40,7 +40,7 @@ func (uc *userController) get(id int, w http.ResponseWriter) {
 	encodeResponseAsJSON(u, w)
 }
 
-func (uc *userController) post(w htt.ResponseWriter, r *http.Request) {
+func (uc *userController) post(w http.ResponseWriter, r *http.Request) {
 	u, err := uc.parseRequest(r)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -56,4 +56,32 @@ func (uc *userController) post(w htt.ResponseWriter, r *http.Request) {
 	}
 
 	encodeResponseAsJSON(u, w)
+}
+
+func (uc *userController) put(id int, w http.ResponseWriter, r *http.Request) {
+	u, err := uc.parseRequest(r)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Could not parse User object"))
+		return
+	}
+
+	if id != u.ID {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("ID of submitted user must match ID in URL"))
+		return
+	}
+
+	encodeResponseAsJSON(u, w)
+}
+
+func (uc *userController) delete(id int, w http.ResponseWriter) {
+	err := models.RemoveUserByID(id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader([]byte(err.Error()))
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
