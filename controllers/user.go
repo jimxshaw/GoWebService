@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"regexp"
+	"strconv"
 
 	"github.com/jimxshaw/gowebservice/models"
 )
@@ -22,9 +23,43 @@ func newUserController() *userController {
 	}
 }
 
-// ServeHTTP takes in a request and returns a response.
+// ServeHTTP takes in a request and based on the info in the request will
+// determine which method below to pass the request on to be processed.
 func (uc userController) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello from the User Controller!"))
+	// Find out if we're dealing with a collection of users or a single user.
+	if r.URL.Path == "/users" {
+		switch r.Method {
+		case http.MethodGet:
+			uc.getAll(w, r)
+		case http.MethodPost:
+			uc.post(w, r)
+		default:
+			w.WriteHeader(http.StatusNotImplemented)
+		}
+	} else {
+		matches := uc.userIDPattern.FindStringSubmatch(r.URL.Path)
+		if len(matches) == 0 {
+			w.WriteHeader(http.StatusNotFound)
+		}
+
+		// The returned matches will be a slice: ["users", "32"].
+		// Convert the id, in the 1 index, which is a string to an int.
+		id, err := strconv.Atoi(matches[1])
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+		}
+
+		switch r.Method {
+		case http.MethodGet:
+			uc.get(id, w)
+		case http.MethodPut:
+			uc.put(id, w, r)
+		case http.MethodDelete:
+			uc.delete(id, w)
+		default:
+			w.WriteHeader(http.StatusNotFound)
+		}
+	}
 }
 
 func (uc *userController) getAll(w http.ResponseWriter, r *http.Request) {
