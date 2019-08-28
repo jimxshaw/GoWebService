@@ -32,9 +32,26 @@ func (uc *userController) getAll(w http.ResponseWriter, r *http.Request) {
 
 func (uc *userController) get(id int, w http.ResponseWriter) {
 	u, err := models.GetUserByID(id)
-
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	encodeResponseAsJSON(u, w)
+}
+
+func (uc *userController) post(w htt.ResponseWriter, r *http.Request) {
+	u, err := uc.parseRequest(r)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Could not parse User object"))
+		return
+	}
+
+	u, err = models.AddUser(u)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
