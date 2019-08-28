@@ -108,6 +108,13 @@ func (uc *userController) put(id int, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	u, err = models.UpdateUser(u)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
 	encodeResponseAsJSON(u, w)
 }
 
