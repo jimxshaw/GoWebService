@@ -57,7 +57,7 @@ func (uc userController) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		case http.MethodDelete:
 			uc.delete(id, w)
 		default:
-			w.WriteHeader(http.StatusNotFound)
+			w.WriteHeader(http.StatusNotImplemented)
 		}
 	}
 }
@@ -115,7 +115,7 @@ func (uc *userController) delete(id int, w http.ResponseWriter) {
 	err := models.RemoveUserByID(id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.WriteHeader([]byte(err.Error()))
+		w.Write([]byte(err.Error()))
 		return
 	}
 
