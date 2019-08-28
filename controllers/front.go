@@ -1,6 +1,10 @@
 package controllers
 
-import "net/http"
+import (
+	"encoding/json"
+	"io"
+	"net/http"
+)
 
 // RegisterControllers will set up the routing
 // in the entire application. When a network
@@ -11,4 +15,9 @@ func RegisterControllers() {
 
 	http.Handle("/users", *uc)
 	http.Handle("/users/", *uc)
+}
+
+func encodeResponseAsJSON(data interface{}, w io.Writer) {
+	enc := json.NewEncoder(w)
+	enc.Encode(data)
 }
